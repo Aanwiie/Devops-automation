@@ -25,27 +25,24 @@ The architecture follows a **decoupled microservices** approach — ensuring sca
 
 ```mermaid
 graph TD
-    A[Frontend (React)] -- POST /trigger --> B(Backend - Node.js/Express)
+    A[Frontend (React)] -- POST /trigger --> B[Backend (Node.js/Express)]
     B -- Enqueue Job --> C[Redis Queue]
     B -- Persist Metadata --> D[(MongoDB)]
-    C -- Consume Task --> E[Agent Service - Node.js]
+    C -- Consume Task --> E[Agent Service (Node.js)]
     E -- Run Simulated Build --> E
     E -- Status Updates --> B
     B -- Final Save --> D
     B -- GET /jobs --> A
 
-    subgraph Core Data & Orchestration
+    subgraph Core_Data_&_Orchestration
         C
         D
     end
 
-    subgraph Presentation & Control
+    subgraph Presentation_&_Control
         A
         B
     end
-```
-
----
 
 ## 🛠️ Tech Stack
 
