@@ -24,7 +24,7 @@ This project serves as a **Final-Year Team Project** showcasing system orchestra
 The architecture follows a **decoupled microservices** approach — ensuring scalability and clear separation of concerns through a shared **Redis queue** and **MongoDB persistence**.
 
 ```mermaid
-graph TD
+flowchart TD
     A[Frontend (React)] -- POST /trigger --> B[Backend (Node.js/Express)]
     B -- Enqueue Job --> C[Redis Queue]
     B -- Persist Metadata --> D[(MongoDB)]
