@@ -22,26 +22,35 @@ This project serves as a **Final-Year Team Project** showcasing system orchestra
 ## 🏛️ System Architecture
 
 The architecture follows a **decoupled microservices** approach — ensuring scalability and clear separation of concerns through a shared **Redis queue** and **MongoDB persistence**.
-
+%% MCP Hub System Architecture Diagram
 graph TD
-    A[Frontend (React)] -- "POST /trigger" --> B[Backend (Node.js/Express)]
-    B -- "Enqueue Job" --> C[Redis Queue]
-    B -- "Persist Metadata" --> D[(MongoDB)]
-    C -- "Consume Task" --> E[Agent Service (Node.js)]
-    E -- "Run Simulated Build" --> E
-    E -- "Status Updates" --> B
+
+    %% --- Presentation & Control Layer ---
+    subgraph Presentation_&_Control
+        A[Frontend (React Dashboard)]
+        B[Backend (Node.js / Express API)]
+    end
+
+    %% --- Core Data & Orchestration Layer ---
+    subgraph Core_Data_&_Orchestration
+        C[(Redis Queue)]
+        D[(MongoDB Database)]
+    end
+
+    %% --- Agent / Worker Layer ---
+    E[Agent Service (Node.js Worker)]
+
+    %% --- Flow Connections ---
+    A -- "POST /trigger" --> B
+    B -- "Enqueue Job" --> C
+    B -- "Persist Initial Data" --> D
+    C -- "Consume Job Task" --> E
+    E -- "Execute Simulated Build" --> E
+    E -- "Status & Log Updates" --> B
     B -- "Final Save" --> D
     B -- "GET /jobs" --> A
 
-    subgraph Core_Data_&_Orchestration
-        C
-        D
-    end
 
-    subgraph Presentation_&_Control
-        A
-        B
-    end
 
 
 ## 🛠️ Tech Stack
