@@ -26,7 +26,6 @@ It defines reusable Dockerfiles for the backend, agent, and frontend services, a
    ```bash
    git clone https://github.com/Aanwiie/Devops-automation.git
    cd Devops-automation
-````
 
 2. **Switch to the DevOps branch**
 
@@ -125,25 +124,6 @@ MongoDB: connection successful
 Redis: PONG
 ```
 
----
-
-## 🔄 Collaboration Workflow
-
-### For Developers
-
-* Write your service code inside `backend/`, `agent-service/`, or `frontend/`.
-* Each folder has its own `Dockerfile`.
-* On merge, Docker Compose auto-builds and runs your container.
-
-### Merge Flow
-
-1. Work on your branch
-2. Test locally with Docker
-3. Create a Pull Request → `main`
-4. DevOps validates container health before merge
-
----
-
 ## 📚 References
 
 * [Docker Documentation](https://docs.docker.com/)
@@ -151,7 +131,3 @@ Redis: PONG
 * [Redis Documentation](https://redis.io/docs/)
 * [MongoDB Manual](https://www.mongodb.com/docs/manual/)
 * [Node.js Docs](https://nodejs.org/en/docs)
-
-````
-
----
