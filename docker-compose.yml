@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: mcp-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-password123}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - mcp-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Queue
+  redis:
+    image: redis:7-alpine
+    container_name: mcp-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API (will start when code is available)
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mcp-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - MONGODB_URI=mongodb://${MONGO_USERNAME:-admin}:${MONGO_PASSWORD:-password123}@mongodb:27017/${MONGO_DATABASE:-mcphub}?authSource=admin
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - mcp-network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  # Agent Service 
+  agent:
+    build:
+      context: ./agent-service
+      dockerfile: Dockerfile
+    container_name: mcp-agent
+    restart: unless-stopped
+    ports:
+      - "${AGENT_PORT:-3001}:3001"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - BACKEND_URL=http://backend:3000
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - mcp-network
+    volumes:
+      - ./agent-service:/app
+      - /app/node_modules
+
+  # Frontend (will start when code is available)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mcp-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:${BACKEND_PORT:-3000}
+    depends_on:
+      - backend
+    networks:
+      - mcp-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
