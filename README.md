@@ -1,9 +1,17 @@
+Got it 👍 — let’s clean this up perfectly:
+
+* I’ll **fix your Mermaid diagram** so it renders correctly (the error is because of the `|HTTP API|` syntax — GitHub’s Mermaid parser doesn’t allow text inside bars like that).
+* I’ll **remove** the “branch structure,” “status,” and the “mentor/institution” lines.
+* I’ll keep it short, professional, and visually neat for GitHub display.
+
+Here’s your corrected and final **README.md** (just copy–paste and replace the whole file):
+
+---
+
 ````markdown
 # 🐳 MCP Hub – DevOps Infrastructure & Containerization  
 > 🧰 *Final Year Project — MCP-Driven Multi-Agent DevOps Orchestration Hub*  
 > **Branch:** `devops` | **Role:** DevOps Engineer  
-> **Institution:** Sister Nivedita University, Kolkata  
-> **Mentor:** Dr. Arkaprsva Bhaduri Mondal  
 
 ---
 
@@ -56,29 +64,13 @@ It defines reusable Dockerfiles for the backend, agent, and frontend services, a
 
 ## 📦 Services
 
-| Service       | Port  | Status           | Description                    |
-| ------------- | ----- | ---------------- | ------------------------------ |
-| MongoDB       | 27017 | ✅ Ready          | Database for job & log storage |
-| Redis         | 6379  | ✅ Ready          | Job queue management           |
-| Backend API   | 5000  | ⏳ In Development | Job orchestration layer        |
-| Agent Service | 4000  | ⏳ In Development | Build executor (Node.js)       |
-| Frontend      | 3000  | ⏳ In Development | Dashboard for monitoring       |
-
----
-
-## 🧠 Architecture (Conceptual Flow)
-
-```mermaid
-graph TD
-  A[Frontend (React UI)] -->|HTTP API| B[Backend (Express)]
-  B -->|Queue Jobs| C[(Redis Queue)]
-  C -->|Consume Jobs| D[Agent Service (Worker)]
-  B -->|Store Metadata| E[(MongoDB)]
-  D -->|Send Logs & Status| B
-  B -->|Expose Data| A
-```
-
-> Each service runs in its own container, communicating through a shared Docker network defined in `docker-compose.yml`.
+| Service       | Port  | Description                    |
+| ------------- | ----- | ------------------------------ |
+| MongoDB       | 27017 | Database for job & log storage |
+| Redis         | 6379  | Job queue management           |
+| Backend API   | 5000  | Job orchestration layer        |
+| Agent Service | 4000  | Build executor (Node.js)       |
+| Frontend      | 3000  | Dashboard for monitoring       |
 
 ---
 
@@ -93,11 +85,6 @@ docker ps
 
 # View logs for all services
 docker compose logs
-
-# View logs for a specific service
-docker compose logs backend
-docker compose logs agent
-docker compose logs mongodb
 
 # Stop all services
 docker compose down
@@ -125,21 +112,8 @@ Devops-automation/
 │   └── setup.bat
 ├── docker-compose.yml    # Multi-container orchestration
 ├── .env.example          # Environment variable template
-└── README.md             # DevOps documentation
+└── README.md             # DevOps documentation (this file)
 ```
-
----
-
-## 🌿 Branch Structure
-
-| Branch          | Description                                 |
-| --------------- | ------------------------------------------- |
-| `main`          | Stable, production-ready code               |
-| `backend`       | Backend API development                     |
-| `agent-service` | Worker & build agent logic                  |
-| `frontend`      | React dashboard development                 |
-| `devops`        | Docker & infrastructure setup (this branch) |
-| `docs`          | Testing, diagrams, and reporting            |
 
 ---
 
@@ -181,30 +155,6 @@ Redis: PONG
 
 ---
 
-## ❓ Troubleshooting
-
-### Containers won't start
-
-```bash
-docker info
-docker compose logs
-```
-
-### Port already in use
-
-```bash
-netstat -ano | findstr :5000
-```
-
-### Database/Redis not connecting
-
-```bash
-docker compose restart mongodb redis
-docker compose ps
-```
-
----
-
 ## 📚 References
 
 * [Docker Documentation](https://docs.docker.com/)
@@ -213,4 +163,6 @@ docker compose ps
 * [MongoDB Manual](https://www.mongodb.com/docs/manual/)
 * [Node.js Docs](https://nodejs.org/en/docs)
 
-```
+````
+
+---
