@@ -20,6 +20,7 @@ This project serves as a **Final-Year Team Project** showcasing system orchestra
 ---
 
 ## 🏛️ System Architecture
+(https://github.com/user-attachments/assets/a85c4e54-fc6b-4777-85c0-b6bae0597b7e)
 
 The architecture follows a **decoupled microservices** approach — ensuring scalability and clear separation of concerns through a shared **Redis queue** and **MongoDB persistence**.
 %% MCP Hub System Architecture Diagram
@@ -50,7 +51,7 @@ graph TD
     B -- "Final Save" --> D
     B -- "GET /jobs" --> A
 
-
+![WhatsApp Image 2025-11-05 at 20 53 47_92ec39bb]
 
 
 
