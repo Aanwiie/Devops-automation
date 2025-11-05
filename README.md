@@ -86,7 +86,7 @@ mcp-hub/
     ├── architecture-diagram.png
     └── project-report.md
 
-    ![WhatsApp Image 2025-11-05 at 20 09 38_29a41b64](https://github.com/user-attachments/assets/79176782-3412-4098-8bcc-5e6c168b6bad)
+   ![WhatsApp Image 2025-11-05 at 20 09 38_29a41b64](https://github.com/user-attachments/assets/79176782-3412-4098-8bcc-5e6c168b6bad)
 
 Installation & Setup
 Prerequisites
