@@ -1,222 +1,231 @@
-# Devops-automation
-Here is a concise, one-liner description of your project:  **MCP Hub is a fully containerized, full-stack prototype utilizing Node.js, Redis, and MongoDB to orchestrate, execute, persist, and visualize simulated software build jobs via a React dashboard.**
-MCP Hub Prototype
-Overview
+ 🚀 MCP Hub Prototype: Build Orchestration & Monitoring
 
-MCP Hub is a simplified prototype of a build orchestration and monitoring system inspired by CI/CD and MCP (Model Context Protocol) concepts.
-It allows users to trigger builds, manage job queues, and visualize logs and build statuses in real time through a web dashboard.
+A simplified **build orchestration and monitoring system** inspired by **CI/CD** and **MCP (Model Context Protocol)** concepts.
+It enables users to trigger builds, manage job queues, and visualize real-time logs and statuses via a modern web dashboard.
 
-This project is designed as a final-year team project focusing on system orchestration, backend-frontend integration, and distributed service communication using Node.js, Redis, and MongoDB.
+This project serves as a **Final-Year Team Project** showcasing system orchestration, backend–frontend integration, and distributed service communication using **Node.js**, **Redis**, and **MongoDB**.
 
-Core Features
+---
 
-Trigger Build Jobs – Start simulated build processes through the backend API or UI.
+## ✨ Overview
 
-Queue Management – Manage build execution using Redis and BullMQ for job scheduling.
+| Icon | Feature                    | Description                                                                   |
+| :--: | :------------------------- | :---------------------------------------------------------------------------- |
+|  🎬  | **Job Orchestration**      | Trigger and manage build execution via an Express-based REST API.             |
+|  🚦  | **Reliable Queuing**       | Uses **Redis + BullMQ** for robust job scheduling and delivery.               |
+|  ⚙️  | **Distributed Execution**  | A dedicated Node.js **Agent Service** executes simulated build tasks.         |
+|  📊  | **Real-Time Monitoring**   | Track job lifecycle: *Queued → Running → Completed/Failed* via the dashboard. |
+|  📦  | **Dockerized Environment** | Deploy all services seamlessly with **Docker Compose**.                       |
 
-Simulated Agent Execution – A Node.js agent fetches queued jobs and executes simulated build commands.
+---
 
-Real-time Status Updates – Track job progress (Queued → Running → Completed/Failed).
+## 🏛️ System Architecture
 
-Dashboard UI – Simple React dashboard to monitor all builds, statuses, and logs.
+The architecture follows a **decoupled microservices** approach — ensuring scalability and clear separation of concerns through a shared **Redis queue** and **MongoDB persistence**.
 
-Dockerized Environment – Fully containerized setup using Docker Compose.
+```mermaid
+graph TD
+    A[Frontend (React)] -- POST /trigger --> B(Backend - Node.js/Express)
+    B -- Enqueue Job --> C[Redis Queue]
+    B -- Persist Metadata --> D[(MongoDB)]
+    C -- Consume Task --> E[Agent Service - Node.js]
+    E -- Run Simulated Build --> E
+    E -- Status Updates --> B
+    B -- Final Save --> D
+    B -- GET /jobs --> A
 
-System Architecture
-                   ┌──────────────────┐
-                   │     Frontend     │
-                   │  (React/Next.js) │
-                   └───────▲──────────┘
-                           │ REST API
-                           ▼
-                   ┌──────────────────┐
-                   │     Backend      │
-                   │ (Node.js + Exp.) │
-                   │  API + Orchestration │
-                   └───────┬──────────┘
-                           │
-            ┌──────────────┼──────────────┐
-            │                              │
-            ▼                              ▼
-   ┌──────────────────┐           ┌──────────────────┐
-   │      Redis       │           │     MongoDB      │
-   │ (Job Queue)      │           │ (Job Data, Logs) │
-   └──────────────────┘           └──────────────────┘
-            │
-            ▼
-   ┌──────────────────┐
-   │      Agent       │
-   │  (Node.js)       │
-   │ Simulated Build  │
-   └──────────────────┘
+    subgraph Core Data & Orchestration
+        C
+        D
+    end
 
-Tech Stack
-Component	Technology	Purpose
-Backend	Node.js + Express	API and job orchestration
-Queue	Redis + BullMQ	Job scheduling and task management
-Database	MongoDB	Persistent job data and logs
-Agent	Node.js	Simulated build executor service
-Frontend	React	Dashboard UI for visualization
-Deployment	Docker + Docker Compose	Containerized multi-service setup
-Folder Structure
+    subgraph Presentation & Control
+        A
+        B
+    end
+```
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer              | Component      | Technology           | Role                                           |
+| :----------------- | :------------- | :------------------- | :--------------------------------------------- |
+| **API / Control**  | Backend        | Node.js (Express)    | API layer, job creation, and orchestration     |
+| **Job Management** | Queue          | Redis + BullMQ       | High-performance, fault-tolerant job scheduler |
+| **Persistence**    | Database       | MongoDB              | Stores job data, logs, and metadata            |
+| **Worker**         | Agent          | Node.js Microservice | Executes simulated build tasks                 |
+| **Interface**      | Frontend       | React                | Interactive dashboard for job monitoring       |
+| **Deployment**     | Infrastructure | Docker Compose       | Multi-container orchestration setup            |
+
+---
+
+## 📂 Folder Structure
+
+```
 mcp-hub/
 │
-├── backend/
+├── backend/                  # Node.js Express API and orchestration logic
 │   ├── src/
-│   │   ├── routes/
-│   │   ├── models/
-│   │   ├── controllers/
-│   │   └── utils/
+│   │   ├── routes/           # REST API routes
+│   │   ├── models/           # MongoDB schemas
+│   │   ├── controllers/      # Core business logic
+│   │   └── utils/            # Helper functions
 │   ├── .env
-│   └── server.js
+│   └── server.js             # Backend entry point
 │
-├── agent/
+├── agent/                    # Job execution service
 │   ├── src/
-│   │   └── agent.js
+│   │   └── agent.js          # Worker logic consuming jobs
 │   ├── .env
 │   └── package.json
 │
-├── frontend/
+├── frontend/                 # React dashboard UI
 │   ├── src/
 │   └── package.json
 │
-├── docker-compose.yml
-├── README.md
-└── docs/
-    ├── architecture-diagram.png
-    └── project-report.md
+├── docker-compose.yml        # Multi-service container orchestration
+└── README.md
+```
 
-   ![WhatsApp Image 2025-11-05 at 20 09 38_29a41b64](https://github.com/user-attachments/assets/79176782-3412-4098-8bcc-5e6c168b6bad)
+---
 
-Installation & Setup
-Prerequisites
+## ⚙️ Installation & Setup
 
-Node.js (v18+)
+### 🧩 Prerequisites
 
-Docker & Docker Compose
+Ensure the following are installed:
 
-MongoDB and Redis (installed locally or via Docker)
+* Node.js **v18+**
+* **Docker** & **Docker Compose**
 
-1. Clone the Repository
+---
+
+### 1️⃣ Clone the Repository
+
+```bash
 git clone https://github.com/<your-username>/mcp-hub.git
 cd mcp-hub
+```
 
-2. Environment Setup
+---
 
-Create .env files for backend and agent:
+### 2️⃣ Configure Environment Variables
 
-backend/.env
+Create `.env` files in the respective directories:
 
+**`backend/.env`**
+
+```bash
 PORT=5000
 MONGO_URI=mongodb://mongo:27017/mcp_hub
 REDIS_HOST=redis
+```
 
+**`agent/.env`**
 
-agent/.env
-
+```bash
 REDIS_HOST=redis
 BACKEND_URL=http://backend:5000
+```
 
-3. Run with Docker
-docker-compose up --build
+---
 
+### 3️⃣ Launch with Docker Compose (Recommended)
 
-This will start:
+Build and start all services:
 
-Backend (Node.js)
+```bash
+docker-compose up --build -d
+```
 
-Agent service
+| Service            | Host URL                                       | Port |
+| :----------------- | :--------------------------------------------- | :--- |
+| Frontend Dashboard | [http://localhost:3000](http://localhost:3000) | 3000 |
+| Backend API        | [http://localhost:5000](http://localhost:5000) | 5000 |
 
-MongoDB
+---
 
-Redis
+### 4️⃣ Manual Run (Without Docker)
 
-Frontend (React)
+If MongoDB and Redis are running locally:
 
-The app should be available at:
-
-Frontend: http://localhost:3000
-
-Backend API: http://localhost:5000
-
-4. Manual Run (Without Docker)
-
-If you prefer to run services manually:
-
-Backend
-
-cd backend
-npm install
+```bash
+# Backend
+cd backend && npm install
 npm run dev
 
-
-Agent
-
-cd agent
-npm install
+# Agent
+cd agent && npm install
 npm start
 
-
-Frontend
-
-cd frontend
-npm install
-
+# Frontend
+cd frontend && npm install
 npm start
+```
 
-API Endpoints
-Method	Endpoint	Description
-POST	/trigger	Trigger a new simulated build job
-GET	/jobs	List all jobs
-GET	/jobs/:id	Fetch details and logs for a specific job
-Team Members & Roles
-Name	Role	Responsibilities
-Member 1	Backend Lead	Node.js APIs, job orchestration, Redis integration
-Member 2	Agent Engineer	Agent development, job execution, status updates
-Member 3	Frontend Developer	React dashboard, API integration, UI design
-Member 4	DevOps & Integration	Docker setup, environment management, CI/CD
-Member 5	Documentation & QA	Testing, documentation, diagrams, presentation
-Development Roadmap
-Week 1: Backend Setup
+---
 
-Initialize backend and setup MongoDB + Redis
+### 🛑 Stop & Clean Up
 
-Implement APIs for triggering and tracking jobs
+```bash
+docker-compose down -v
+```
 
-Week 2: Agent Service
+> The `-v` flag removes MongoDB volumes for a fresh start next time.
 
-Develop simulated agent service
+---
 
-Integrate job consumption and status updates
+## 📞 API Endpoints
 
-Week 3: Frontend Dashboard
+|  Method  | Endpoint    | Description                          |
+| :------: | :---------- | :----------------------------------- |
+| **POST** | `/trigger`  | Triggers a new simulated build job   |
+|  **GET** | `/jobs`     | Fetches all job history and metadata |
+|  **GET** | `/jobs/:id` | Retrieves detailed job info and logs |
 
-Build React dashboard for jobs, logs, and triggering builds
+---
 
-Week 4: Integration & Finalization
+## 🗓️ Team & Roadmap
 
-Docker Compose setup
+**Team:** *NodeNerds*
+**Project Type:** Final Year Project (November 2025)
 
-Error handling, authentication, final testing, and demo prep
+| Name     | Role                 | Focus Area                                   |
+| :------- | :------------------- | :------------------------------------------- |
+| Sneha   | Backend Lead         | Node.js API, orchestration, Redis integration |
+| Eshita  | Agent Engineer       | Job execution, status updates                 |
+| Aditi   | Frontend Developer   | React UI, API integration                     |
+| Mouli   | DevOps & Integration | Docker, CI/CD setup                           |
+| Anwesha | Documentation & QA   | Testing, documentation, reporting             |
 
-Future Enhancements
+---
 
-Real build execution via Docker containers
+### 🧭 Development Timeline
 
-WebSocket-based live log streaming
+| Week | Goal               | Deliverable                                    |
+| :--: | :----------------- | :--------------------------------------------- |
+|   1  | Backend Foundation | Job queuing and persistence system             |
+|   2  | Agent Integration  | Worker consumes and updates job status         |
+|   3  | Frontend Dashboard | Real-time job tracking and trigger UI          |
+|   4  | Finalization       | Docker setup, error handling, demo-ready build |
 
-Multi-agent support for distributed builds
+---
 
-Role-based access control
+## 💡 Future Directions
 
-Metrics dashboard using Prometheus + Grafana
+* 🧰 **Real CI/CD Support** — Implement Docker-in-Docker for actual build runs
+* 🔴 **Live Logs** — Use WebSockets for live streaming build output
+* ⚡ **Scalability** — Add load balancing and multi-agent parallelism
+* 📈 **Observability** — Integrate Prometheus & Grafana for monitoring
+* 🔐 **Access Control** — Role-based authentication (RBAC)
 
-License
+---
 
-This project is licensed under the MIT License
-.
+## 📄 License
 
-Contributors
+This project is licensed under the **MIT License**.
+Developed with ❤️ by **Team NodeNerds** — Final Year Project, November 2025.
 
-Developed by Team NodeNerds
-Final Year Project — November 2025
+---
+
