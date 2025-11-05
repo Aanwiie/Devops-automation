@@ -23,16 +23,15 @@ This project serves as a **Final-Year Team Project** showcasing system orchestra
 
 The architecture follows a **decoupled microservices** approach — ensuring scalability and clear separation of concerns through a shared **Redis queue** and **MongoDB persistence**.
 
-```mermaid
-flowchart TD
-    A[Frontend (React)] -- POST /trigger --> B[Backend (Node.js/Express)]
-    B -- Enqueue Job --> C[Redis Queue]
-    B -- Persist Metadata --> D[(MongoDB)]
-    C -- Consume Task --> E[Agent Service (Node.js)]
-    E -- Run Simulated Build --> E
-    E -- Status Updates --> B
-    B -- Final Save --> D
-    B -- GET /jobs --> A
+graph TD
+    A[Frontend (React)] -- "POST /trigger" --> B[Backend (Node.js/Express)]
+    B -- "Enqueue Job" --> C[Redis Queue]
+    B -- "Persist Metadata" --> D[(MongoDB)]
+    C -- "Consume Task" --> E[Agent Service (Node.js)]
+    E -- "Run Simulated Build" --> E
+    E -- "Status Updates" --> B
+    B -- "Final Save" --> D
+    B -- "GET /jobs" --> A
 
     subgraph Core_Data_&_Orchestration
         C
@@ -43,6 +42,7 @@ flowchart TD
         A
         B
     end
+
 
 ## 🛠️ Tech Stack
 
