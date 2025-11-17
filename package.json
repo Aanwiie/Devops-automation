@@ -1,0 +1,20 @@
+{
+  "name": "mcp-hub-prototype",
+  "version": "1.0.0",
+  "description": "MCP Hub prototype - Node.js + Express + bullmq + MongoDB + Redis (real command runner)",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "agent": "node src/worker/agent.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "bullmq": "^4.0.0",
+    "ioredis": "^5.3.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "body-parser": "^1.20.2",
+    "uuid": "^9.0.0"
+  }
+}

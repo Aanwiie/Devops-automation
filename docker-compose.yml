@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  api:
+    build: .
+    environment:
+      - PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/mcp_hub
+      - REDIS_URL=redis://redis:6379
+      - QUEUE_NAME=builds
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+      - mongo
+
+  agent:
+    build: .
+    command: ["node", "src/worker/agent.js"]
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/mcp_hub
+      - REDIS_URL=redis://redis:6379
+      - QUEUE_NAME=builds
+    depends_on:
+      - redis
+      - mongo
+
+volumes:
+  mongo_data:
