@@ -1,0 +1,8 @@
+{
+    "jobId": "test2",
+    "action": "simulate-build",
+    "payload": {
+        "repo": "demo2",
+        "steps": 5
+    }
+}
