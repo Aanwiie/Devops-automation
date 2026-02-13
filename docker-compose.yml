@@ -1,13 +1,14 @@
-version: '3.8'
 services:
   redis:
     image: redis:7
+    container_name: mcp-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
 
   mongo:
     image: mongo:6
+    container_name: mcp-mongo
     restart: unless-stopped
     ports:
       - "27017:27017"
@@ -16,11 +17,14 @@ services:
 
   api:
     build: .
+    container_name: mcp-api
+    command: npm run start:api
+    restart: unless-stopped
     environment:
-      - PORT=3000
-      - MONGO_URI=mongodb://mongo:27017/mcp_hub
-      - REDIS_URL=redis://redis:6379
-      - QUEUE_NAME=builds
+      PORT: 3000
+      MONGO_URI: mongodb://mongo:27017/mcp_hub
+      REDIS_URL: redis://redis:6379
+      QUEUE_NAME: builds
     ports:
       - "3000:3000"
     depends_on:
@@ -29,11 +33,13 @@ services:
 
   agent:
     build: .
-    command: ["node", "src/worker/agent.js"]
+    container_name: mcp-agent
+    command: npm run start:agent
+    restart: unless-stopped
     environment:
-      - MONGO_URI=mongodb://mongo:27017/mcp_hub
-      - REDIS_URL=redis://redis:6379
-      - QUEUE_NAME=builds
+      MONGO_URI: mongodb://mongo:27017/mcp_hub
+      REDIS_URL: redis://redis:6379
+      QUEUE_NAME: builds
     depends_on:
       - redis
       - mongo
