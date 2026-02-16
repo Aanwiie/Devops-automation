@@ -130,3 +130,61 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Landing page animations */
+@keyframes landing-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-30px); }
+}
+
+@keyframes landing-float-delayed {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes landing-pulse-glow {
+  0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+@keyframes landing-fade-in-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes landing-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+@keyframes landing-gradient-text {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.landing-float {
+  animation: landing-float 8s ease-in-out infinite;
+}
+
+.landing-float-delayed {
+  animation: landing-float-delayed 10s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.landing-pulse-glow {
+  animation: landing-pulse-glow 6s ease-in-out infinite;
+}
+
+.landing-fade-in-up {
+  animation: landing-fade-in-up 0.8s ease-out forwards;
+}
+
+.landing-bounce {
+  animation: landing-bounce 2s ease-in-out infinite;
+}
+
+.landing-gradient-text {
+  background-size: 200% auto;
+  animation: landing-gradient-text 4s ease infinite;
+}

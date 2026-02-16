@@ -9,11 +9,16 @@ import JobDetail from "@/components/job-detail"
 import PipelinesPage from "@/components/pipelines-page"
 import AgentsPage from "@/components/agents-page"
 import HealthPage from "@/components/health-page"
+import LandingPage from "@/components/landing-page"
 
-export type PageType = "dashboard" | "jobs" | "job-detail" | "pipelines" | "agents" | "health"
+export type PageType = "landing" | "dashboard" | "jobs" | "job-detail" | "pipelines" | "agents" | "health"
 
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState<PageType>("dashboard")
+  const [currentPage, setCurrentPage] = useState<PageType>("landing")
+
+  if (currentPage === "landing") {
+    return <LandingPage setCurrentPage={setCurrentPage} />
+  }
 
   return (
     <div className="flex h-screen bg-background text-foreground">
