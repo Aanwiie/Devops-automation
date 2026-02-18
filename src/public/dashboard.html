@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Automation - Dashboard</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f7fa;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    h1 { 
+      color: #2c3e50;
+      margin: 0 0 20px 0;
+      font-size: 28px;
+    }
+    
+    #controls { 
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    button:hover { background: #2980b9; }
+    button:active { transform: translateY(1px); }
+    button:disabled { 
+      background: #bdc3c7;
+      cursor: not-allowed;
+    }
+    
+    .content {
+      display: grid;
+      grid-template-columns: 40% 60%;
+      gap: 20px;
+    }
+    
+    @media (max-width: 900px) {
+      .content { grid-template-columns: 1fr; }
+    }
+    
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    h2 {
+      margin: 0 0 15px 0;
+      font-size: 20px;
+      color: #2c3e50;
+    }
+    
+    #jobList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    
+    #jobList li {
+      cursor: pointer;
+      padding: 12px;
+      border-bottom: 1px solid #ecf0f1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+    
+    #jobList li:hover { background: #f8f9fa; }
+    #jobList li.selected { background: #e3f2fd; }
+    #jobList li:last-child { border-bottom: none; }
+    
+    .job-name {
+      font-weight: 500;
+      color: #2c3e50;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .status {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .status-queued { background: #f0f0f0; color: #666; }
+    .status-running { background: #fff3cd; color: #856404; animation: pulse 2s infinite; }
+    .status-success { background: #d4edda; color: #155724; }
+    .status-failed { background: #f8d7da; color: #721c24; }
+    .status-cancelled { background: #e2e3e5; color: #383d41; }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    #jobMeta {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    
+    #jobMeta b { color: #2c3e50; }
+    
+    #logs {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 15px;
+      height: 500px;
+      overflow: auto;
+      white-space: pre-wrap;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      border-radius: 5px;
+      line-height: 1.5;
+    }
+    
+    #logs::-webkit-scrollbar { width: 8px; }
+    #logs::-webkit-scrollbar-track { background: #2d2d2d; }
+    #logs::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+    #logs::-webkit-scrollbar-thumb:hover { background: #666; }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #95a5a6;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border-left: 4px solid #721c24;
+    }
+    
+    .auto-refresh-status {
+      margin-left: auto;
+      font-size: 13px;
+      color: #7f8c8d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚙️ DevOps Automation Dashboard</h1>
+
+    <div id="controls">
+      <button id="refresh">🔄 Refresh</button>
+      <button id="new">➕ Trigger Demo Build</button>
+      <button id="toggleAutoRefresh">⏸️ Pause Auto-Refresh</button>
+      <span class="auto-refresh-status" id="autoRefreshStatus">Auto-refresh: ON</span>
+    </div>
+
+    <div class="content">
+      <div class="panel">
+        <h2>Jobs</h2>
+        <div id="jobsError"></div>
+        <ul id="jobList">
+          <li class="empty-state">Loading jobs...</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h2>Job Details</h2>
+        <div id="detailsError"></div>
+        <div id="jobMeta">Select a job to see details</div>
+        <h3>Logs</h3>
+        <pre id="logs">Select a job to see logs</pre>
+      </div>
+    </div>
+  </div>
+
+<script>
+const apiBase = '';
+let autoRefresh = true;
+let autoRefreshInterval;
+let selectedJobId = null;
+
+// Fetch jobs with error handling
+async function fetchJobs() {
+  try {
+    const res = await fetch(apiBase + '/jobs?limit=50');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    return json.jobs || [];
+  } catch (err) {
+    console.error('Error fetching jobs:', err);
+    showError('jobsError', 'Failed to fetch jobs: ' + err.message);
+    return [];
+  }
+}
+
+// Show error message
+function showError(elementId, message) {
+  const el = document.getElementById(elementId);
+  el.innerHTML = `<div class="error-message">${message}</div>`;
+  setTimeout(() => el.innerHTML = '', 5000);
+}
+
+// Render job list
+function renderJobs(jobs) {
+  const ul = document.getElementById('jobList');
+  
+  if (jobs.length === 0) {
+    ul.innerHTML = '<li class="empty-state">No jobs yet. Click "Trigger Demo Build" to create one.</li>';
+    return;
+  }
+  
+  ul.innerHTML = '';
+  jobs.forEach(j => {
+    const li = document.createElement('li');
+    if (j._id === selectedJobId) li.classList.add('selected');
+    
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'job-name';
+    nameSpan.textContent = j.name || j._id;
+    nameSpan.title = j.name || j._id;
+    
+    const statusSpan = document.createElement('span');
+    statusSpan.className = `status status-${j.status}`;
+    statusSpan.textContent = j.status;
+    
+    li.appendChild(nameSpan);
+    li.appendChild(statusSpan);
+    li.onclick = () => loadJob(j._id);
+    ul.appendChild(li);
+  });
+}
+
+// Load job details
+async function loadJob(id) {
+  selectedJobId = id;
+  
+  try {
+    const res = await fetch(apiBase + '/jobs/' + id);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    
+    const json = await res.json();
+    const job = json.job;
+    
+    // Update meta info
+    const meta = document.getElementById('jobMeta');
+    const duration = job.startedAt && job.finishedAt 
+      ? ((new Date(job.finishedAt) - new Date(job.startedAt)) / 1000).toFixed(2) + 's'
+      : 'N/A';
+    
+    meta.innerHTML = `
+      <b>ID:</b> ${job._id}<br/>
+      <b>Name:</b> ${job.name}<br/>
+      <b>Status:</b> <span class="status status-${job.status}">${job.status}</span><br/>
+      <b>Created:</b> ${new Date(job.createdAt).toLocaleString()}<br/>
+      ${job.startedAt ? '<b>Started:</b> ' + new Date(job.startedAt).toLocaleString() + '<br/>' : ''}
+      ${job.finishedAt ? '<b>Finished:</b> ' + new Date(job.finishedAt).toLocaleString() + '<br/>' : ''}
+      <b>Duration:</b> ${duration}<br/>
+      ${job.repo ? '<b>Repo:</b> ' + job.repo + '<br/>' : ''}
+      ${job.commit ? '<b>Commit:</b> ' + job.commit : ''}
+    `;
+    
+    // Update logs
+    const logs = document.getElementById('logs');
+    if (job.logs && job.logs.length > 0) {
+      logs.textContent = job.logs
+        .map(l => '[' + new Date(l.ts).toLocaleTimeString() + '] ' + l.message)
+        .join('\n');
+      
+      // Auto-scroll to bottom
+      logs.scrollTop = logs.scrollHeight;
+    } else {
+      logs.textContent = 'No logs available yet';
+    }
+    
+    // Update selected job in list
+    document.querySelectorAll('#jobList li').forEach(li => {
+      li.classList.remove('selected');
+    });
+    const selectedLi = Array.from(document.querySelectorAll('#jobList li'))
+      .find(li => li.querySelector('.job-name').textContent === job.name);
+    if (selectedLi) selectedLi.classList.add('selected');
+    
+  } catch (err) {
+    console.error('Error loading job:', err);
+    showError('detailsError', 'Failed to load job details: ' + err.message);
+  }
+}
+
+// Refresh handler
+async function refresh() {
+  const jobs = await fetchJobs();
+  renderJobs(jobs);
+  
+  // If a job was selected, reload its details
+  if (selectedJobId) {
+    await loadJob(selectedJobId);
+  }
+}
+
+// Toggle auto-refresh
+function toggleAutoRefresh() {
+  autoRefresh = !autoRefresh;
+  const btn = document.getElementById('toggleAutoRefresh');
+  const status = document.getElementById('autoRefreshStatus');
+  
+  if (autoRefresh) {
+    btn.textContent = '⏸️ Pause Auto-Refresh';
+    status.textContent = 'Auto-refresh: ON';
+    startAutoRefresh();
+  } else {
+    btn.textContent = '▶️ Resume Auto-Refresh';
+    status.textContent = 'Auto-refresh: OFF';
+    stopAutoRefresh();
+  }
+}
+
+function startAutoRefresh() {
+  stopAutoRefresh(); // Clear any existing interval
+  autoRefreshInterval = setInterval(refresh, 3000); // Every 3 seconds
+}
+
+function stopAutoRefresh() {
+  if (autoRefreshInterval) {
+    clearInterval(autoRefreshInterval);
+    autoRefreshInterval = null;
+  }
+}
+
+// Event listeners
+document.getElementById('refresh').onclick = refresh;
+document.getElementById('toggleAutoRefresh').onclick = toggleAutoRefresh;
+
+document.getElementById('new').onclick = async () => {
+  const btn = document.getElementById('new');
+  btn.disabled = true;
+  btn.textContent = '⏳ Creating...';
+  
+  try {
+    const body = {
+      name: 'demo-' + Date.now(),
+      repo: 'https://example.com/repo.git',
+      commit: 'abc123def456',
+      commands: [
+        'echo "▶ Starting demo build..."',
+        'echo "Checking environment..."',
+        'node -v',
+        'npm -v',
+        'echo "Build completed successfully! ✓"'
+      ]
+    };
+    
+    const res = await fetch(apiBase + '/trigger', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    const json = await res.json();
+    
+    if (json.ok) {
+      await refresh();
+      // Auto-select the new job
+      if (json.id) {
+        setTimeout(() => loadJob(json.id), 500);
+      }
+    } else {
+      showError('jobsError', 'Failed to create job: ' + (json.error || 'Unknown error'));
+    }
+  } catch (err) {
+    showError('jobsError', 'Failed to create job: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '➕ Trigger Demo Build';
+  }
+};
+
+// Initialize
+window.onload = () => {
+  refresh();
+  startAutoRefresh();
+};
+
+// Cleanup on unload
+window.onbeforeunload = () => {
+  stopAutoRefresh();
+};
+</script>
+</body>
+</html>
