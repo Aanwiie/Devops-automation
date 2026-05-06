@@ -245,13 +245,4 @@ For issues and questions:
 - Check existing documentation
 - Review Docker logs for errors
 
-## 🎯 Roadmap
 
-- [ ] WebSocket support for real-time log streaming
-- [ ] Job scheduling with cron expressions
-- [ ] Multi-tenant support
-- [ ] Job templates
-- [ ] Slack/email notifications
-- [ ] Metrics and analytics dashboard
-- [ ] Job retry policies
-- [ ] Artifact storage
